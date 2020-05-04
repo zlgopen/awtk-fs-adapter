@@ -1,0 +1,18 @@
+import os
+import copy
+
+BIN_DIR=os.environ['BIN_DIR'];
+LIB_DIR=os.environ['LIB_DIR'];
+
+FATFS_SOURCES = [
+  'fs_os_fatfs.c',
+  'fatfs/ff/ff.c',
+  'fatfs/diskio_ramdisk.c',
+  'fatfs/ff/ffunicode.c'
+]
+
+env=DefaultEnvironment().Clone()
+env.Library(os.path.join(LIB_DIR, 'fatfs'), FATFS_SOURCES, LIBS=[])
+
+LIBS=['fatfs'] + env['LIBS']
+env.Program(os.path.join(BIN_DIR, 'fatfs_test'), ['fatfs_test.c'], LIBS=LIBS);
