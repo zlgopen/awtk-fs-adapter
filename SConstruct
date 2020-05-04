@@ -17,7 +17,7 @@ os.environ['LIB_DIR'] = APP_LIB_DIR;
 APP_CCFLAGS = ' -DWITH_RAM_DISK '
 APP_LINKFLAGS=''
 APP_LIBPATH = [APP_LIB_DIR]
-APP_LIBS = ['sqlite3']
+APP_LIBS = []
 APP_CPPPATH=[
   os.path.join(APP_ROOT, 'src/fatfs/include'),
   os.path.join(APP_ROOT, 'src/fatfs/ff/include')
