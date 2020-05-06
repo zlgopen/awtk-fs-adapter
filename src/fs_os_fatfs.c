@@ -1,9 +1,10 @@
-﻿#include "tkc/types_def.h"
+#include "tkc/types_def.h"
 #include "tkc/fs.h"
 #include "ff.h"
 #include "tkc/mem.h"
 #include "tkc/utils.h"
 #include <stdarg.h>
+#include <stdio.h>
 
 typedef struct _fs_file_ff_t {
   fs_file_t fs_file;
@@ -277,7 +278,7 @@ bool_t fs_os_file_exist(fs_t* fs, const char* name) {
 ret_t fs_os_file_rename(fs_t* fs, const char* name, const char* new_name) {
   TCHAR path[MAX_PATH + 1];
   TCHAR new_path[MAX_PATH + 1];
-  return_value_if_fail(name != NULL && new_name != NULL, FALSE);
+  return_value_if_fail(name != NULL && new_name != NULL, RET_BAD_PARAMS);
 
   return fresult_to_ret(f_rename(path_from_utf8(path, name), path_from_utf8(new_path, new_name)));
 }
@@ -343,7 +344,7 @@ bool_t fs_os_dir_exist(fs_t* fs, const char* name) {
 ret_t fs_os_dir_rename(fs_t* fs, const char* name, const char* new_name) {
   TCHAR path[MAX_PATH + 1];
   TCHAR new_path[MAX_PATH + 1];
-  return_value_if_fail(name != NULL && new_name != NULL, FALSE);
+  return_value_if_fail(name != NULL && new_name != NULL, RET_BAD_PARAMS);
 
   return fresult_to_ret(f_rename(path_from_utf8(path, name), path_from_utf8(new_path, new_name)));
 }
@@ -400,7 +401,7 @@ static ret_t fs_os_get_cwd(fs_t* fs, char cwd[MAX_PATH + 1]) {
 static ret_t fs_os_stat(fs_t* fs, const char* name, fs_stat_info_t* fst) {
   FILINFO fno;
   TCHAR path[MAX_PATH + 1];
-  return_value_if_fail(name != NULL && fst != NULL, -1);
+  return_value_if_fail(name != NULL && fst != NULL, RET_BAD_PARAMS);
 
   if (f_stat(path_from_utf8(path, name), &fno) == FR_OK) {
     fst->size = fno.fsize;
