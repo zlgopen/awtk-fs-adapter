@@ -4,7 +4,12 @@
 #include "tkc/mem.h"
 #include "tkc/utils.h"
 #include <stdarg.h>
+
+#if defined(LINUX) || defined(WIN32) || defined(MACOS) || defined(HAS_STDIO)
 #include <stdio.h>
+#else
+extern int vsnprintf (char * s, size_t n, const char * format, va_list arg );
+#endif
 
 typedef struct _fs_file_ff_t {
   fs_file_t fs_file;
@@ -190,10 +195,10 @@ static fs_file_t* fs_file_create(void) {
  *
  */
 static BYTE mode_from_str(fs_t* fs, const char* filename, const char* mode) {
-  if (tk_str_eq(mode, "r")) {
+  if (tk_str_eq(mode, "r") || tk_str_eq(mode, "rb")) {
     /* "r"	read: Open file for input operations. The file must exist. */
     return FA_READ;
-  } else if (tk_str_eq(mode, "w")) {
+  } else if (tk_str_eq(mode, "w") || tk_str_eq(mode, "wb")) {
     /* "w"	write: Create an empty file for output operations. If a file with
      * the same name already exists, its contents are discarded and the file is
      * treated as a new empty file. */
@@ -211,11 +216,11 @@ static BYTE mode_from_str(fs_t* fs, const char* filename, const char* mode) {
     } else {
       return FA_CREATE_NEW | FA_OPEN_APPEND | FA_WRITE;
     }
-  } else if (tk_str_eq(mode, "r+")) {
+  } else if (tk_str_eq(mode, "r+") || tk_str_eq(mode, "rb+")) {
     /* "r+"	read/update: Open a file for update (both for input and output).
      * The file must exist. */
     return FA_WRITE | FA_READ;
-  } else if (tk_str_eq(mode, "w+")) {
+  } else if (tk_str_eq(mode, "w+") || tk_str_eq(mode, "wb+")) {
     /* "w+"	write/update: Create an empty file and open it for update (both for
      * input and output). If a file with the same name already exists its
      * contents are discarded and the file is treated as a new empty file.*/
