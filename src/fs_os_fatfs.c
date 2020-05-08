@@ -79,6 +79,33 @@ static ret_t fs_os_file_seek(fs_file_t* file, int32_t offset) {
   return fresult_to_ret(ret);
 }
 
+static int64_t fs_os_file_tell(fs_file_t* file) {
+  FIL* fp = &(((fs_file_ff_t*)file)->file);
+
+  return f_tell(fp);
+}
+
+static int64_t fs_os_file_size(fs_file_t* file) {
+  FIL* fp = &(((fs_file_ff_t*)file)->file);
+
+  return f_size(fp);
+}
+
+static ret_t fs_os_file_stat(fs_file_t* file, fs_stat_info_t* fst) {
+  FIL* fp = &(((fs_file_ff_t*)file)->file);
+
+  memset(fst, 0x00, sizeof(fs_stat_info_t));
+  fst->size = f_size(fp);
+  fst->is_reg_file = TRUE;
+
+  return RET_OK;
+}
+
+static ret_t fs_os_file_sync(fs_file_t* file) {
+  FIL* fp = &(((fs_file_ff_t*)file)->file);
+  return f_sync(fp) == 0 ? RET_OK : RET_FAIL;
+}
+
 static ret_t fs_os_file_truncate(fs_file_t* file, int32_t size) {
   FIL* fp = &(((fs_file_ff_t*)file)->file);
 
@@ -174,6 +201,10 @@ static const fs_file_vtable_t s_file_vtable = {.read = fs_os_file_read,
                                                .write = fs_os_file_write,
                                                .printf = fs_os_file_printf,
                                                .seek = fs_os_file_seek,
+                                               .tell = fs_os_file_tell,
+                                               .size = fs_os_file_size,
+                                               .stat = fs_os_file_stat,
+                                               .sync = fs_os_file_sync,
                                                .truncate = fs_os_file_truncate,
                                                .eof = fs_os_file_eof,
                                                .close = fs_os_file_close};
