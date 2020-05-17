@@ -16,3 +16,14 @@ env.Library(os.path.join(LIB_DIR, 'fatfs'), FATFS_SOURCES, LIBS=[])
 
 LIBS=['fatfs'] + env['LIBS']
 env.Program(os.path.join(BIN_DIR, 'fatfs_test'), ['fatfs_test.c'], LIBS=LIBS);
+
+SPIFFS_SOURCES = [
+ 'fs_os_spiffs.c',
+  Glob('spiffs/*.c')
+]
+
+env=DefaultEnvironment().Clone()
+env.Library(os.path.join(LIB_DIR, 'spiffs'), SPIFFS_SOURCES, LIBS=[])
+
+LIBS=['spiffs'] + env['LIBS']
+env.Program(os.path.join(BIN_DIR, 'spiffs_test'), ['spiffs_test.c'], LIBS=LIBS);

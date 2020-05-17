@@ -20,7 +20,9 @@ APP_LIBPATH = [APP_LIB_DIR]
 APP_LIBS = []
 APP_CPPPATH=[
   os.path.join(APP_ROOT, 'src/fatfs/include'),
-  os.path.join(APP_ROOT, 'src/fatfs/ff/include')
+  os.path.join(APP_ROOT, 'src/fatfs/ff/include'),
+  os.path.join(APP_ROOT, 'src/spiffs/default'),
+  os.path.join(APP_ROOT, 'src/spiffs')
 ]
 
 if hasattr(awtk, 'CC'):
