@@ -67,7 +67,7 @@ int32_t fs_os_file_printf(fs_file_t* file, const char* const format, va_list arg
 static ret_t fs_os_file_seek(fs_file_t* file, int32_t offset) {
   spiffs_file fp = (((fs_file_spiffs_t*)file)->file);
 
-  return SPIFFS_lseek(sfs, fp, offset, 0);
+  return SPIFFS_lseek(sfs, fp, offset, 0) == 0 ? RET_OK : RET_FAIL;
 }
 
 static int64_t fs_os_file_tell(fs_file_t* file) {
@@ -146,7 +146,6 @@ static ret_t fs_os_dir_rewind(fs_dir_t* dir) {
 static ret_t fs_os_dir_read(fs_dir_t* dir, fs_item_t* item) {
   struct spiffs_dirent e;
   spiffs_DIR* dp = &(((fs_dir_spiffs_t*)dir)->dir);
-  fs_dir_spiffs_t* fdir = ((fs_dir_spiffs_t*)dir);
 
   memset(item, 0x00, sizeof(fs_item_t));
 
@@ -154,7 +153,7 @@ static ret_t fs_os_dir_read(fs_dir_t* dir, fs_item_t* item) {
     item->is_link = FALSE;
     item->is_dir = e.type == SPIFFS_TYPE_DIR;
     item->is_reg_file = e.type == SPIFFS_TYPE_FILE;
-    tk_strncpy(item->name, e.name, MAX_PATH);
+    tk_strncpy(item->name, (char*)(e.name), MAX_PATH);
 
     return RET_OK;
   } else {
@@ -199,7 +198,7 @@ static fs_file_t* fs_file_create(void) {
  *
  *
  */
-static BYTE mode_from_str(fs_t* fs, const char* filename, const char* mode) {
+static int mode_from_str(fs_t* fs, const char* filename, const char* mode) {
   if (tk_str_eq(mode, "r") || tk_str_eq(mode, "rb")) {
     /* "r"	read: Open file for input operations. The file must exist. */
     return SPIFFS_RDONLY;
@@ -271,7 +270,7 @@ static ret_t fs_os_remove_file(fs_t* fs, const char* name) {
 static bool_t fs_os_file_exist(fs_t* fs, const char* name) {
   fs_stat_info_t info;
 
-  if (fs_os_stat(fs, name, &info) == RET_OK) {
+  if (fs_stat(fs, name, &info) == RET_OK) {
     return info.is_reg_file;
   } else {
     return FALSE;
@@ -324,7 +323,7 @@ static ret_t fs_os_create_dir(fs_t* fs, const char* name) {
 static bool_t fs_os_dir_exist(fs_t* fs, const char* name) {
   fs_stat_info_t info;
 
-  if (fs_os_stat(sfs, name, &info) == RET_OK) {
+  if (fs_stat(fs, name, &info) == RET_OK) {
     return info.is_dir;
   } else {
     return FALSE;
@@ -337,7 +336,7 @@ static ret_t fs_os_dir_rename(fs_t* fs, const char* name, const char* new_name) 
 
 static int32_t fs_os_get_file_size(fs_t* fs, const char* name) {
   fs_stat_info_t info;
-  if (fs_os_stat(sfs, name, &info) == RET_OK) {
+  if (fs_stat(fs, name, &info) == RET_OK) {
     return info.size;
   } else {
     return 0;

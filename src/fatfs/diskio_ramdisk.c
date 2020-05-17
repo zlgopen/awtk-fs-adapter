@@ -82,4 +82,4 @@ DRESULT ff_disk_ioctl(BYTE pdrv, BYTE cmd, void* buff) {
   return RAM_disk_ioctl(cmd, buff);
 }
 
-#endif/*WITH_RAM_DISK*/
+#endif /*WITH_RAM_DISK*/
