@@ -1,6 +1,30 @@
-#include "tkc/types_def.h"
-#include "tkc/fs.h"
+/**
+ * File:   fs_os_fatfs.c
+ * Author: AWTK Develop Team
+ * Brief:  fatfs implemented fs
+ *
+ * Copyright (c) 2020 - 2020  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * License file for more details.
+ *
+ */
+
+/**
+ * History:
+ * ================================================================
+ * 2020-05-04 Li XianJing <xianjimli@hotmail.com> created
+ *
+ */
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN 1
+#endif /*WIN32_LEAN_AND_MEAN*/
+
 #include "ff.h"
+#include "tkc/fs.h"
 #include "tkc/mem.h"
 #include "tkc/utils.h"
 #include <stdarg.h>
@@ -8,7 +32,7 @@
 #if defined(LINUX) || defined(WIN32) || defined(MACOS) || defined(HAS_STDIO)
 #include <stdio.h>
 #else
-extern int vsnprintf (char * s, size_t n, const char * format, va_list arg );
+extern int vsnprintf(char* s, size_t n, const char* format, va_list arg);
 #endif
 
 typedef struct _fs_file_ff_t {
@@ -110,7 +134,6 @@ static ret_t fs_os_file_truncate(fs_file_t* file, int32_t size) {
   FIL* fp = &(((fs_file_ff_t*)file)->file);
 
   if (size == 0) {
-    f_lseek(fp, 0);
     return fresult_to_ret(f_truncate(fp));
   } else {
     assert(!"not impl");
@@ -275,7 +298,7 @@ static BYTE mode_from_str(fs_t* fs, const char* filename, const char* mode) {
   }
 }
 
-fs_file_t* fs_os_open_file(fs_t* fs, const char* name, const char* mode) {
+static fs_file_t* fs_os_open_file(fs_t* fs, const char* name, const char* mode) {
   FIL* fp = NULL;
   fs_file_t* file = NULL;
   TCHAR path[MAX_PATH + 1];
@@ -299,7 +322,7 @@ static ret_t fs_os_remove_file(fs_t* fs, const char* name) {
   return fresult_to_ret(f_unlink(path_from_utf8(path, name)));
 }
 
-bool_t fs_os_file_exist(fs_t* fs, const char* name) {
+static bool_t fs_os_file_exist(fs_t* fs, const char* name) {
   FILINFO fno;
   TCHAR path[MAX_PATH + 1];
   return_value_if_fail(name != NULL, FALSE);
@@ -311,7 +334,7 @@ bool_t fs_os_file_exist(fs_t* fs, const char* name) {
   }
 }
 
-ret_t fs_os_file_rename(fs_t* fs, const char* name, const char* new_name) {
+static ret_t fs_os_file_rename(fs_t* fs, const char* name, const char* new_name) {
   TCHAR path[MAX_PATH + 1];
   TCHAR new_path[MAX_PATH + 1];
   return_value_if_fail(name != NULL && new_name != NULL, RET_BAD_PARAMS);
@@ -322,7 +345,7 @@ ret_t fs_os_file_rename(fs_t* fs, const char* name, const char* new_name) {
 static const fs_dir_vtable_t s_dir_vtable = {
     .read = fs_os_dir_read, .rewind = fs_os_dir_rewind, .close = fs_os_dir_close};
 
-fs_dir_t* fs_dir_create(void) {
+static fs_dir_t* fs_dir_create(void) {
   fs_dir_t* d = NULL;
   fs_dir_ff_t* fdir = TKMEM_ZALLOC(fs_dir_ff_t);
   if (fdir != NULL) {
@@ -334,7 +357,7 @@ fs_dir_t* fs_dir_create(void) {
   return d;
 }
 
-fs_dir_t* fs_os_open_dir(fs_t* fs, const char* name) {
+static fs_dir_t* fs_os_open_dir(fs_t* fs, const char* name) {
   FF_DIR* dp = NULL;
   fs_dir_t* dir = NULL;
   TCHAR path[MAX_PATH + 1];
@@ -365,7 +388,7 @@ static ret_t fs_os_create_dir(fs_t* fs, const char* name) {
   return fresult_to_ret(f_mkdir(path_from_utf8(path, name)));
 }
 
-bool_t fs_os_dir_exist(fs_t* fs, const char* name) {
+static bool_t fs_os_dir_exist(fs_t* fs, const char* name) {
   FILINFO fno;
   TCHAR path[MAX_PATH + 1];
   return_value_if_fail(name != NULL, FALSE);
@@ -377,7 +400,7 @@ bool_t fs_os_dir_exist(fs_t* fs, const char* name) {
   }
 }
 
-ret_t fs_os_dir_rename(fs_t* fs, const char* name, const char* new_name) {
+static ret_t fs_os_dir_rename(fs_t* fs, const char* name, const char* new_name) {
   TCHAR path[MAX_PATH + 1];
   TCHAR new_path[MAX_PATH + 1];
   return_value_if_fail(name != NULL && new_name != NULL, RET_BAD_PARAMS);
@@ -385,7 +408,7 @@ ret_t fs_os_dir_rename(fs_t* fs, const char* name, const char* new_name) {
   return fresult_to_ret(f_rename(path_from_utf8(path, name), path_from_utf8(new_path, new_name)));
 }
 
-int32_t fs_os_get_file_size(fs_t* fs, const char* name) {
+static int32_t fs_os_get_file_size(fs_t* fs, const char* name) {
   FILINFO fno;
   TCHAR path[MAX_PATH + 1];
   return_value_if_fail(name != NULL, -1);
