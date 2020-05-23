@@ -8,7 +8,7 @@ AWTK 文件系统适配器。
 
 * [FATFS](https://github.com/abbrev/fatfs) 主要用于访问 TF card。
 
-* [SPIFFS](https://github.com/pellepl/spiffs) 主要用于访问 Nor Flash。比如把内部 flash 分出一部分来存储数据。
+* [SPIFFS](https://github.com/pellepl/spiffs) 主要用于访问 Nor Flash。
 
 ## PC 编译
 1. 获取 awtk 并编译
