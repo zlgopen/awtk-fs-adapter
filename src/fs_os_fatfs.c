@@ -440,7 +440,7 @@ static ret_t fs_os_get_exe(fs_t* fs, char path[MAX_PATH + 1]) {
 static ret_t fs_os_get_user_storage_path(fs_t* fs, char path[MAX_PATH + 1]) {
   tk_strcpy(path, "/appdata");
 
-  return RET_FAIL;
+  return RET_OK;
 }
 
 static ret_t fs_os_get_cwd(fs_t* fs, char cwd[MAX_PATH + 1]) {
