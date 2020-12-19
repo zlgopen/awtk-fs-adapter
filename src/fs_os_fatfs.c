@@ -443,6 +443,12 @@ static ret_t fs_os_get_user_storage_path(fs_t* fs, char path[MAX_PATH + 1]) {
   return RET_OK;
 }
 
+static ret_t fs_os_get_temp_path(fs_t* fs, char path[MAX_PATH + 1]) {
+  tk_strcpy(path, "/tmp");
+
+  return RET_OK;
+}
+
 static ret_t fs_os_get_cwd(fs_t* fs, char cwd[MAX_PATH + 1]) {
   TCHAR path[MAX_PATH + 1];
   return_value_if_fail(cwd != NULL, RET_BAD_PARAMS);
@@ -491,6 +497,7 @@ static const fs_t s_os_fs = {.open_file = fs_os_open_file,
                              .get_cwd = fs_os_get_cwd,
                              .get_exe = fs_os_get_exe,
                              .get_user_storage_path = fs_os_get_user_storage_path,
+                             .get_temp_path = fs_os_get_temp_path,
                              .stat = fs_os_stat};
 
 fs_t* os_fs_fatfs(void) {

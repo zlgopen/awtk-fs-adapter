@@ -355,13 +355,19 @@ static ret_t fs_os_get_disk_info(fs_t* fs, const char* volume, int32_t* free_kb,
 }
 
 static ret_t fs_os_get_exe(fs_t* fs, char path[MAX_PATH + 1]) {
-  tk_strcpy(path, "app");
+  tk_strcpy(path, "/app/bin");
 
   return RET_OK;
 }
 
 static ret_t fs_os_get_user_storage_path(fs_t* fs, char path[MAX_PATH + 1]) {
   tk_strcpy(path, "/appdata");
+
+  return RET_OK;
+}
+
+static ret_t fs_os_get_temp_path(fs_t* fs, char path[MAX_PATH + 1]) {
+  tk_strcpy(path, "/tmp");
 
   return RET_OK;
 }
@@ -396,6 +402,7 @@ static const fs_t s_os_fs = {.open_file = fs_os_open_file,
                              .get_disk_info = fs_os_get_disk_info,
                              .get_cwd = fs_os_get_cwd,
                              .get_exe = fs_os_get_exe,
+                             .get_temp_path = fs_os_get_temp_path,
                              .get_user_storage_path = fs_os_get_user_storage_path,
                              .stat = fs_os_stat};
 
