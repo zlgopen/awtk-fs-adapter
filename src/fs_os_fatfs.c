@@ -512,6 +512,6 @@ fs_t* os_fs_fatfs(void) {
 #if defined(MACOS) || defined(LINUX) || defined(WIN32)
 #else
 fs_t* os_fs(void) {
-  return os_fs_fatfs(&s_os_fs);
+  return os_fs_fatfs();
 }
 #endif
