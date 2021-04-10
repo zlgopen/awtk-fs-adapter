@@ -29,3 +29,6 @@ cd awtk-fs-adapter; scons
 ## 嵌入式系统编译
 
 将相应的文件加入工程。
+
+>如果需要支持多线程，请定义宏WITH\_FS\_MT，并加入文件src/fs\_mt.c。
+

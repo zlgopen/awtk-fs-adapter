@@ -3,7 +3,7 @@ import scripts.app_helper as app
 
 helper = app.Helper(ARGUMENTS);
 
-APP_CCFLAGS = '-DWITH_RAM_DISK '
+APP_CCFLAGS = '-DWITH_RAM_DISK -DWITH_FS_MT '
 APP_CPPPATH=[
   os.path.join(helper.APP_ROOT, 'src/fatfs/include'),
   os.path.join(helper.APP_ROOT, 'src/fatfs/ff/include'),

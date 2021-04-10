@@ -28,6 +28,7 @@
 #include "tkc/mem.h"
 #include "tkc/utils.h"
 #include <stdarg.h>
+#include "fs_mt.h"
 
 #if defined(LINUX) || defined(WIN32) || defined(MACOS) || defined(HAS_STDIO)
 #include <stdio.h>
@@ -413,12 +414,16 @@ ret_t os_fs_spiffs_set(spiffs* fs) {
 }
 
 fs_t* os_fs_spiffs(void) {
+#ifdef WITH_FS_MT
+  return fs_mt_wrap((fs_t*)&s_os_fs);
+#else
   return (fs_t*)&s_os_fs;
+#endif/*WITH_FS_MT*/
 }
 
 #if defined(MACOS) || defined(LINUX) || defined(WIN32)
 #else
 fs_t* os_fs(void) {
-  return (fs_t*)&s_os_fs;
+  return os_fs_spiffs();
 }
 #endif
