@@ -9,6 +9,7 @@
 #include "tkc/platform.h"
 
 extern void test_fs(fs_t* fs);
+extern void test_fs_wait(void);
 extern fs_t* os_fs_fatfs(void);
 
 int main(int argc, char* argv[]) {
