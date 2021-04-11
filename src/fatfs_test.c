@@ -13,7 +13,7 @@ extern fs_t* os_fs_fatfs(void);
 
 int main(int argc, char* argv[]) {
   FATFS fatfs;
-  fs_t* fs  = NULL;
+  fs_t* fs = NULL;
   BYTE work[FF_MAX_SS];
 
   platform_prepare();
@@ -23,6 +23,7 @@ int main(int argc, char* argv[]) {
   assert(f_mount(&fatfs, "0:", 0) == FR_OK);
 
   test_fs(fs);
+  test_fs_wait();
 
   assert(f_mount(0, "0:", 0) == FR_OK);
 

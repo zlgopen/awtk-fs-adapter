@@ -15,7 +15,9 @@ int main(int argc, char* argv[]) {
   int ret = fs_mount_ram(&myfs, flash, sizeof(flash));
 
   os_fs_spiffs_set(&myfs);
+#ifndef WIN32
   fs_test_file(os_fs_spiffs());
+#endif/*WIN32*/
 
   return 0;
 }

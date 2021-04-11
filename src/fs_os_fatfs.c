@@ -398,7 +398,15 @@ static bool_t fs_os_dir_exist(fs_t* fs, const char* name) {
   if (f_stat(path_from_utf8(path, name), &fno) == FR_OK) {
     return (fno.fattrib & AM_DIR) != 0;
   } else {
-    return FALSE;
+    int32_t len = strlen(name);
+    /*make sure the root directory always exist.*/
+    if (len == 3 && name[1] == ':' && (name[2] == '/' || name[2] == '\\')) {
+      return TRUE;
+    } else if (len == 2 && name[1] == ':') {
+      return TRUE;
+    } else {
+      return FALSE;
+    }
   }
 }
 
@@ -507,7 +515,7 @@ fs_t* os_fs_fatfs(void) {
   return fs_mt_wrap((fs_t*)&s_os_fs);
 #else
   return (fs_t*)&s_os_fs;
-#endif/*WITH_FS_MT*/
+#endif /*WITH_FS_MT*/
 }
 #if defined(MACOS) || defined(LINUX) || defined(WIN32)
 #else

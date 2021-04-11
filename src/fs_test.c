@@ -16,14 +16,22 @@ static void* work_thread(void* args) {
   char path[MAX_PATH + 1];
   char filename[MAX_PATH + 1];
   uint32_t id = (uint32_t)tk_pointer_to_int(args);
+#ifndef WIN32
+  if (id == 0) {
+    fs_test(fs);
+  }
+#endif/*WIN32*/
 
   log_debug("%u start\n", id);
-  for(i = 0; i < NR; i++) {
+  assert(fs_dir_exist(fs, "0:/"));
+  for (i = 0; i < NR; i++) {
     tk_snprintf(path, MAX_PATH, "0:/%u/%u", id, i);
     tk_snprintf(filename, MAX_PATH, "0:/%u/%u/test.txt", id, i);
-    if(!fs_dir_exist(fs, path)) {
-     assert(fs_create_dir_r(fs, path) == RET_OK);
+    if (!fs_dir_exist(fs, path)) {
+      assert(fs_create_dir_r(fs, path) == RET_OK);
     }
+    assert(fs_dir_exist(fs, path));
+
     fp = fs_open_file(fs, filename, "w+");
     assert(fp != NULL);
     assert(fs_file_write(fp, TEST_DATA, strlen(TEST_DATA)) == strlen(TEST_DATA));
@@ -42,23 +50,30 @@ static void* work_thread(void* args) {
   }
   tk_snprintf(path, MAX_PATH, "0:/%u", id);
   assert(fs_remove_dir_r(fs, path) == RET_OK);
- 
+
   return NULL;
 }
 
+static tk_thread_t* threads[10];
+
 void test_fs(fs_t* fs) {
   uint32_t i = 0;
-  tk_thread_t* threads[20];
 
   s_fs = fs;
-  fs_test(fs);
 
-  for(i = 0; i < ARRAY_SIZE(threads); i++) {
+  for (i = 0; i < ARRAY_SIZE(threads); i++) {
     threads[i] = tk_thread_create(work_thread, tk_pointer_from_int(i));
+    tk_thread_set_stack_size(threads[i], 0xc000);
     tk_thread_start(threads[i]);
   }
-  
-  for(i = 0; i < ARRAY_SIZE(threads); i++) {
+
+  return;
+}
+
+void test_fs_wait(void) {
+  uint32_t i = 0;
+
+  for (i = 0; i < ARRAY_SIZE(threads); i++) {
     tk_thread_join(threads[i]);
     tk_thread_destroy(threads[i]);
     log_debug("%u stop\n", i);
