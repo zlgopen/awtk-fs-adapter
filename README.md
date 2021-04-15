@@ -32,3 +32,8 @@ cd awtk-fs-adapter; scons
 
 >如果需要支持多线程，请定义宏WITH\_FS\_MT，并加入文件src/fs\_mt.c。
 
+## 其它
+
+* 用户数据目录和临时目录，在src/fs\_os\_conf.h中定义，请根据需要修改。
+
+

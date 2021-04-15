@@ -28,7 +28,9 @@
 #include "tkc/mem.h"
 #include "tkc/utils.h"
 #include <stdarg.h>
+
 #include "fs_mt.h"
+#include "fs_os_conf.h"
 
 #if defined(LINUX) || defined(WIN32) || defined(MACOS) || defined(HAS_STDIO)
 #include <stdio.h>
@@ -362,13 +364,13 @@ static ret_t fs_os_get_exe(fs_t* fs, char path[MAX_PATH + 1]) {
 }
 
 static ret_t fs_os_get_user_storage_path(fs_t* fs, char path[MAX_PATH + 1]) {
-  tk_strcpy(path, "/appdata");
+  tk_strcpy(path, TK_APP_DATA_DIR);
 
   return RET_OK;
 }
 
 static ret_t fs_os_get_temp_path(fs_t* fs, char path[MAX_PATH + 1]) {
-  tk_strcpy(path, "/tmp");
+  tk_strcpy(path, TK_TEMP_DIR);
 
   return RET_OK;
 }
