@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
   fs_dir_close(dir);
 
   log_debug("%s\n", str.str);
-  assert(strcmp(str.str, "test1:test2:") == 0);
+  assert(strcmp(str.str, "test1:test2:") == 0 || strcmp(str.str, "test2:test1:") == 0) ;
 
   file = fs_open_file(fs, "test/test1/test.txt", "wb+");
   assert(file != NULL);
