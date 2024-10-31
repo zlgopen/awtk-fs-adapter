@@ -39,3 +39,13 @@ env.Library(os.path.join(LIB_DIR, 'spiffs'), SPIFFS_SOURCES, LIBS=[])
 
 LIBS=['spiffs', 'mt', 'fstest'] + env['LIBS']
 env.Program(os.path.join(BIN_DIR, 'spiffs_test'), ['spiffs_test.c'], LIBS=LIBS);
+
+POSIX_SOURCES = [
+  'fs_os_posix.c'
+]
+
+env=DefaultEnvironment().Clone()
+env.Library(os.path.join(LIB_DIR, 'posix'), POSIX_SOURCES, LIBS=[])
+
+LIBS=['posix', 'mt', 'fstest'] + env['LIBS']
+env.Program(os.path.join(BIN_DIR, 'posix_test'), ['posix_test.c'], LIBS=LIBS);
