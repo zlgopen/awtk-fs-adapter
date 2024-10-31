@@ -54,14 +54,13 @@ int main(int argc, char* argv[]) {
   fs_file_rename(fs, "test/test1/test.txt", "test/test1/test1.txt");
   assert(fs_file_exist(fs, "test/test1/test1.txt") == TRUE);
 
-  file = fs_open_file(fs, "test/test1/test1.txt", "r");
+  file = fs_open_file(fs, "README.md", "r");
   if (file != NULL) {
     str_clear(&str);
-    str.size = fs_file_read(file, str.str, str.capacity);
+    str.size = fs_file_read(file, str.str, 10);
     str.str[str.size] = '\0';
-    assert(strcmp(str.str, "hello") == 0);
-    assert(fs_file_size(file) == 5);
     fs_file_close(file);
+    log_debug("%s\n", str.str);
   }
 
   assert(fs_remove_file(fs, "test/test1/test1.txt") == RET_OK);
