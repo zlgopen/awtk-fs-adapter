@@ -1,4 +1,4 @@
-/**
+﻿/**
  * File:   fs_os_posix.c
  * Author: AWTK Develop Team
  * Brief:  posix implemented fs
@@ -23,16 +23,7 @@
 #define WIN32_LEAN_AND_MEAN 1
 #endif /*WIN32_LEAN_AND_MEAN*/
 
-#include "ff.h"
-#include "tkc/fs.h"
-#include "tkc/mem.h"
-#include "tkc/utils.h"
-#include <stdarg.h>
-
-#include "fs_mt.h"
-#include "fs_os_conf.h"
-
-#if defined(LINUX) || defined(MACOS) || defined(HAS_STDIO)
+#if defined(LINUX) || defined(MACOS)
 #include <stdio.h>
 #include <unistd.h>
 #include <dirent.h>
@@ -46,21 +37,21 @@
 #include <stdio.h>   
 #include <stdlib.h> 
 #elif defined(RT_THREAD)
-#include "dfs_poxis.h"
+#include <dfs_posix.h>
 #endif
+
+#include "tkc/fs.h"
+#include "tkc/mem.h"
+#include "tkc/utils.h"
+
+#include "fs_mt.h"
+#include "fs_os_conf.h"
 
 typedef struct _fs_file_posix_t {
   fs_file_t fs_file;
   int file;
 } fs_file_posix_t;
 
-static inline ret_t fresult_to_ret(FRESULT ret) {
-  if (ret == FR_OK) {
-    return RET_OK;
-  } else {
-    return RET_FAIL;
-  }
-}
 
 static int32_t fs_os_file_read(fs_file_t* file, void* buffer, uint32_t size) {
   int fd = ((fs_file_posix_t*)file)->file;
@@ -111,13 +102,13 @@ static int64_t fs_os_file_size(fs_file_t* file) {
 static ret_t fs_stat_info_from_stat(fs_stat_info_t* fst, struct stat* st) {
   return_value_if_fail(fst != NULL && st != NULL, RET_BAD_PARAMS);
 
-  fst->dev = st->st_dev;
+  fst->dev = (uint32_t)st->st_dev;
   fst->ino = st->st_ino;
   fst->mode = st->st_mode;
   fst->nlink = st->st_nlink;
   fst->uid = st->st_uid;
   fst->gid = st->st_gid;
-  fst->rdev = st->st_rdev;
+  fst->rdev = (uint32_t)(st->st_rdev);
   fst->size = st->st_size;
   fst->atime = st->st_atime;
   fst->mtime = st->st_mtime;
@@ -189,14 +180,11 @@ static ret_t fs_os_dir_read(fs_dir_t* dir, fs_item_t* item) {
   memset(item, 0x00, sizeof(fs_item_t));
   ent = readdir(dp);
   if (ent != NULL) {
-#if defined(RT_THREAD)
-    item->is_reg_file = ent->fd;
-    item->is_dir = !ent->fd;
-    tk_strcpy(item->name, ent->buf, sizeof(item->name) - 1);
-#else
     uint8_t type = ent->d_type;
     item->is_dir = (type & DT_DIR) != 0;
+#ifdef ST_LINK		
     item->is_link = (type & DT_LNK) != 0;
+#endif/*ST_LINK*/		
     item->is_reg_file = (type & DT_REG) != 0;
 #ifdef WIN32
     str_t str;
@@ -207,7 +195,6 @@ static ret_t fs_os_dir_read(fs_dir_t* dir, fs_item_t* item) {
 #else
     tk_strncpy(item->name, ent->d_name, MAX_PATH);
 #endif
-#endif/*RT_THREAD */
     return RET_OK;
   } else {
     return RET_FAIL;
