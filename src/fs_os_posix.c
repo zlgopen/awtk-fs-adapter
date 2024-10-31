@@ -32,11 +32,19 @@
 #include "fs_mt.h"
 #include "fs_os_conf.h"
 
-#if defined(LINUX) || defined(WIN32) || defined(MACOS) || defined(HAS_STDIO)
+#if defined(LINUX) || defined(MACOS) || defined(HAS_STDIO)
 #include <stdio.h>
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <fcntl.h>    
+#elif defined(WIN32)
+#include <io.h>        
+#include <fcntl.h>    
+#include <sys/types.h> 
+#include <sys/stat.h> 
+#include <stdio.h>   
+#include <stdlib.h> 
 #elif defined(RT_THREAD)
 #include "dfs_poxis.h"
 #endif
