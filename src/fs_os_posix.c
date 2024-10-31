@@ -30,12 +30,16 @@
 #include <sys/stat.h>
 #include <fcntl.h>    
 #elif defined(WIN32)
+#include <windows.h>
 #include <io.h>        
 #include <fcntl.h>    
 #include <sys/types.h> 
 #include <sys/stat.h> 
 #include <stdio.h>   
 #include <stdlib.h> 
+#include "platforms/pc/dirent.inc"
+#define fsync(fd) 0
+#define getcwd _getcwd
 #elif defined(RT_THREAD)
 #include <dfs_posix.h>
 #endif
@@ -354,7 +358,14 @@ static fs_dir_t* fs_os_open_dir(fs_t* fs, const char* name) {
   return_value_if_fail(name != NULL, NULL);
   dir = fs_dir_create();
   return_value_if_fail(dir != NULL, NULL);
+#ifdef WIN32
+  wchar_t* w_name = tk_wstr_dup_utf8(name);
+  dp = opendir(w_name);
+  TKMEM_FREE(w_name);
+#else
   dp = opendir(name);
+#endif
+
   if (dp != NULL) {
     ((fs_dir_posix_t*)dir)->dir = dp;
     return dir;
