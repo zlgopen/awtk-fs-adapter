@@ -10,6 +10,8 @@ AWTK 文件系统适配器。
 
 * [SPIFFS](https://github.com/pellepl/spiffs) 主要用于访问 Nor Flash。
 
+* POSIX 文件系统，兼容 RT-Thread 的文件 DFS 系统接口。
+  
 ## PC 编译
 1. 获取 awtk 并编译
 
@@ -30,10 +32,8 @@ cd awtk-fs-adapter; scons
 
 将相应的文件加入工程。
 
->如果需要支持多线程，请定义宏WITH\_FS\_MT，并加入文件src/fs\_mt.c。
+> 如果需要支持多线程，请定义宏 WITH\_FS\_MT，并加入文件 src/fs\_mt.c。
 
 ## 其它
 
-* 用户数据目录和临时目录，在src/fs\_os\_conf.h中定义，请根据需要修改。
-
-
+* 用户数据目录和临时目录，在 src/fs\_os\_conf.h 中定义，请根据需要修改。
